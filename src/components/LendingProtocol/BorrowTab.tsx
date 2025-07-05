@@ -2,11 +2,17 @@
 
 import { useState } from 'react';
 import Spinner from '../shared/Spinner';
+import { useYGTBalance } from '@/hooks/useYGTBalance';
+import { useFetchUserPosition } from '@/hooks/useFetchUserNft';
 
 const BorrowTab = () => {
   const [supplyAmount, setSupplyAmount] = useState('');
   const [borrowAmount, setBorrowAmount] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { data: ygtBalance } = useYGTBalance();
+  const { data: userPosition } = useFetchUserPosition();
+
+  console.log({ userPosition });
 
   const handleSupply = async () => {
     if (!supplyAmount || parseFloat(supplyAmount) <= 0) return;
@@ -137,7 +143,7 @@ const BorrowTab = () => {
                 Amount to Supply
               </label>
               <button
-                onClick={() => setSupplyAmount('100')}
+                onClick={() => setSupplyAmount(ygtBalance?.formattedBalance || '0')}
                 className="text-sm text-blue-400 hover:text-blue-300 font-medium"
               >
                 Max
@@ -156,7 +162,9 @@ const BorrowTab = () => {
               </div>
             </div>
             <div className="flex justify-between mt-2">
-              <span className="text-sm text-gray-500">Available: 0.00 YGT</span>
+              <span className="text-sm text-gray-500">
+                Available: {ygtBalance?.formattedBalance} YGT
+              </span>
             </div>
           </div>
 
@@ -275,8 +283,9 @@ const BorrowTab = () => {
           <div>
             <h4 className="font-semibold text-orange-900 mb-1">How borrowing works</h4>
             <p className="text-orange-700 text-sm">
-              First supply YGT as collateral, then borrow USDC up to 75% of your collateral value.
-              Monitor your health factor - if it drops below 1.0, your position may be liquidated.
+              First supply YGT as collateral, then borrow USDC up to 90% of your collateral value
+              due to efficient liquidations. Monitor your health factor - if your debt/collateral
+              goes above 0.95 you will be liquidated.
             </p>
           </div>
         </div>

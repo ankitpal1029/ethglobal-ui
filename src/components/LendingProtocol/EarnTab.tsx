@@ -1,19 +1,91 @@
 'use client';
 
 import { useState } from 'react';
+import { useUSDCBalance } from '@/hooks/useUSDCBalance';
+import { MiniKit } from '@worldcoin/minikit-js';
+import { contractsConfig } from '@/contracts';
+import { Permit2 } from '@/contracts/abi/Permit2.sol/Permit2';
+import { useWaitForTransactionReceipt } from '@worldcoin/minikit-react';
+import { client } from '@/contracts/client';
 
 const EarnTab = () => {
   const [depositAmount, setDepositAmount] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { data: usdcBalance } = useUSDCBalance();
+  const [transactionId, setTransactionId] = useState('');
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    client: client,
+    appConfig: {
+      app_id: 'app_c9630568fd794f9b33abac9d26cae36f',
+    },
+    transactionId: transactionId,
+  });
+
+  console.log(isConfirming, isConfirmed);
 
   const handleDeposit = async () => {
     if (!depositAmount || parseFloat(depositAmount) <= 0) return;
 
-    setIsLoading(true);
-    // Simulate deposit transaction
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await onClickUsePermit2();
+    // setIsLoading(true);
+    // // Simulate deposit transaction
+    // await new Promise((resolve) => setTimeout(resolve, 2000));
     setIsLoading(false);
     setDepositAmount('');
+  };
+
+  const onClickUsePermit2 = async () => {
+    // Permit2 is valid for max 1 hour
+    const permitTransfer = {
+      permitted: {
+        token: contractsConfig.USDC.address, // The token I'm sending
+        amount: (Number(depositAmount) * 10 ** 18).toString(),
+      },
+      nonce: Date.now().toString(),
+      deadline: Math.floor((Date.now() + 1 * 60 * 1000) / 1000).toString(),
+    };
+
+    const transferDetails = {
+      to: contractsConfig.LendingHook.address,
+      requestedAmount: (Number(depositAmount) * 10 ** 18).toString(),
+    };
+
+    try {
+      const { finalPayload } = await MiniKit.commandsAsync.sendTransaction({
+        transaction: [
+          {
+            address: '0x000000000022D473030F116dDEE9F6B43aC78BA3',
+            abi: Permit2,
+            functionName: 'signatureTransfer',
+            args: [
+              [
+                [permitTransfer.permitted.token, permitTransfer.permitted.amount],
+                permitTransfer.nonce,
+                permitTransfer.deadline,
+              ],
+              [transferDetails.to, transferDetails.requestedAmount],
+              'PERMIT2_SIGNATURE_PLACEHOLDER_0', // Placeholders will automatically be replaced with the correct signature.
+            ],
+          },
+        ],
+        permit2: [
+          {
+            ...permitTransfer,
+            spender: contractsConfig.LendingHook.address,
+          }, // If you have more than one permit2 you can add more values here.
+        ],
+      });
+
+      if (finalPayload.status === 'error') {
+        console.error('Error sending transaction', finalPayload);
+      } else {
+        console.log(finalPayload.transaction_id);
+        setTransactionId(finalPayload.transaction_id);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -109,7 +181,7 @@ const EarnTab = () => {
                 Amount to Deposit
               </label>
               <button
-                onClick={() => setDepositAmount('100')}
+                onClick={() => setDepositAmount(usdcBalance?.formattedBalance || '0')}
                 className="text-sm text-blue-400 hover:text-blue-300 font-medium"
               >
                 Max
@@ -128,7 +200,9 @@ const EarnTab = () => {
               </div>
             </div>
             <div className="flex justify-between mt-2">
-              <span className="text-sm text-gray-500">Available: 0.00 USDC</span>
+              <span className="text-sm text-gray-500">
+                Available: {usdcBalance?.formattedBalance} USDC
+              </span>
             </div>
           </div>
 
