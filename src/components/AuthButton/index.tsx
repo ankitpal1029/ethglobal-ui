@@ -1,5 +1,6 @@
 'use client';
 import { walletAuth } from '@/auth/wallet';
+import { useLoginWithSiwe } from '@privy-io/react-auth';
 import { Button, LiveFeedback } from '@worldcoin/mini-apps-ui-kit-react';
 import { useMiniKit } from '@worldcoin/minikit-js/minikit-provider';
 import { useCallback, useEffect, useState } from 'react';
@@ -12,6 +13,7 @@ import { useCallback, useEffect, useState } from 'react';
 export const AuthButton = () => {
   const [isPending, setIsPending] = useState(false);
   const { isInstalled } = useMiniKit();
+  const { generateSiweNonce, loginWithSiwe } = useLoginWithSiwe();
 
   const onClick = useCallback(async () => {
     if (!isInstalled || isPending) {
@@ -19,7 +21,11 @@ export const AuthButton = () => {
     }
     setIsPending(true);
     try {
-      await walletAuth();
+      const privyNonce = await generateSiweNonce();
+      const result = await walletAuth(privyNonce);
+      if (result) {
+        await loginWithSiwe({ message: result.message, signature: result.signature });
+      }
     } catch (error) {
       console.error('Wallet authentication button error', error);
       setIsPending(false);
@@ -34,7 +40,12 @@ export const AuthButton = () => {
       if (isInstalled && !isPending) {
         setIsPending(true);
         try {
-          await walletAuth();
+          const privyNonce = await generateSiweNonce();
+          const result = await walletAuth(privyNonce);
+          if (result) {
+            console.log('result: logingin', result);
+            await loginWithSiwe({ message: result.message, signature: result.signature });
+          }
         } catch (error) {
           console.error('Auto wallet authentication error', error);
         } finally {
@@ -55,12 +66,7 @@ export const AuthButton = () => {
       }}
       state={isPending ? 'pending' : undefined}
     >
-      <Button
-        onClick={onClick}
-        disabled={isPending}
-        size="lg"
-        variant="primary"
-      >
+      <Button onClick={onClick} disabled={isPending} size="lg" variant="primary">
         Login with Wallet
       </Button>
     </LiveFeedback>

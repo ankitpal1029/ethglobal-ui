@@ -1,37 +1,24 @@
 import { auth } from '@/auth';
+import { LendingProtocol } from '@/components/LendingProtocol';
 import { Page } from '@/components/PageLayout';
-import { Pay } from '@/components/Pay';
-import { Transaction } from '@/components/Transaction';
 import { UserInfo } from '@/components/UserInfo';
-import { Verify } from '@/components/Verify';
-import { ViewPermissions } from '@/components/ViewPermissions';
+import WalletConnected from '@/components/WalletConnected';
 import { Marble, TopBar } from '@worldcoin/mini-apps-ui-kit-react';
 
 export default async function Home() {
-  const session = await auth();
-
   return (
-    <>
-      <Page.Header className="p-0">
-        <TopBar
-          title="Home"
-          endAdornment={
-            <div className="flex items-center gap-2">
-              <p className="text-sm font-semibold capitalize">
-                {session?.user.username}
-              </p>
-              <Marble src={session?.user.profilePictureUrl} className="w-12" />
-            </div>
-          }
-        />
-      </Page.Header>
-      <Page.Main className="flex flex-col items-center justify-start gap-4 mb-16">
-        <UserInfo />
-        <Verify />
-        <Pay />
-        <Transaction />
-        <ViewPermissions />
-      </Page.Main>
-    </>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">DeFi Lending Protocol</h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Deposit, borrow, and earn with the most competitive rates in DeFi
+          </p>
+        </div>
+        <WalletConnected />
+
+        <LendingProtocol />
+      </div>
+    </div>
   );
 }
