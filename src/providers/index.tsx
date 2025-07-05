@@ -1,4 +1,5 @@
 'use client';
+import { PrivyProvider } from '@privy-io/react-auth';
 import { MiniKitProvider } from '@worldcoin/minikit-js/minikit-provider';
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
@@ -34,9 +35,23 @@ export default function ClientProviders({
 }: ClientProvidersProps) {
   return (
     <ErudaProvider>
+    <PrivyProvider
+    appId="cmcpukbuq018ljo0mgls3uhr2"
+    clientId="client-WY6N5PkyFYAYyQgbjfgw7XuNeC46PJPpfZWdPcgVifmqL"
+    config={{
+      // Create embedded wallets for users who don't have a wallet
+      embeddedWallets: {
+        ethereum: {
+          createOnLogin: 'users-without-wallets'
+        }
+      }
+    }}
+    >
       <MiniKitProvider>
         <SessionProvider session={session}>{children}</SessionProvider>
       </MiniKitProvider>
+
+    </PrivyProvider>
     </ErudaProvider>
   );
 }
