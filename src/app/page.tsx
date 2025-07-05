@@ -1,6 +1,6 @@
 'use client';
 import { AuthButton } from '@/components/AuthButton';
-import { LendingProtocol } from '@/components/LendingProtocol';
+import LendingProtocol from '@/components/LendingProtocol';
 import { Page } from '@/components/PageLayout';
 import { usePrivy } from '@privy-io/react-auth';
 

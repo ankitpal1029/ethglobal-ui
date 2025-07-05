@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Spinner from '../shared/Spinner';
 
 const BorrowTab = () => {
   const [supplyAmount, setSupplyAmount] = useState('');
@@ -37,7 +38,7 @@ const BorrowTab = () => {
       {/* Header */}
       <div className="text-center">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Borrow Assets</h2>
-        <p className="text-gray-600">Supply Token 0 as collateral and borrow Token 1</p>
+        <p className="text-gray-600">Supply YGT as collateral and borrow USDC</p>
       </div>
 
       {/* Stats Cards */}
@@ -121,28 +122,17 @@ const BorrowTab = () => {
       {/* Supply Form */}
       <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 border border-gray-200">
         <div className="mb-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">Supply Token 0 (Collateral)</h3>
-          <p className="text-gray-600">Supply Token 0 as collateral to enable borrowing</p>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Supply YGT (Collateral)</h3>
+          <p className="text-gray-600">Supply YGTas collateral to enable borrowing</p>
         </div>
 
         <div className="space-y-6">
           {/* Amount Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Amount to Supply</label>
-            <div className="relative">
-              <input
-                type="number"
-                value={supplyAmount}
-                onChange={(e) => setSupplyAmount(e.target.value)}
-                placeholder="0.00"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              />
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <span className="text-sm font-medium text-gray-500">Token 0</span>
-              </div>
-            </div>
             <div className="flex justify-between mt-2">
-              <span className="text-sm text-gray-500">Available: 0.00 Token 0</span>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Amount to Supply
+              </label>
               <button
                 onClick={() => setSupplyAmount('100')}
                 className="text-sm text-blue-600 hover:text-blue-700 font-medium"
@@ -150,35 +140,36 @@ const BorrowTab = () => {
                 Max
               </button>
             </div>
+            <div className="flex items-center justify-between w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+              <input
+                type="number"
+                value={supplyAmount}
+                onChange={(e) => setSupplyAmount(e.target.value)}
+                placeholder="0.00"
+                className="w-24 text-blue-600"
+              />
+              <div className="">
+                <span className="text-sm font-medium text-gray-500">YGT</span>
+              </div>
+            </div>
+            <div className="flex justify-between mt-2">
+              <span className="text-sm text-gray-500">Available: 0.00 YGT</span>
+            </div>
           </div>
 
           {/* Supply Button */}
           <button
             onClick={handleSupply}
             disabled={!supplyAmount || parseFloat(supplyAmount) <= 0 || isLoading}
-            className="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-orange-600 hover:to-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg"
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg"
           >
             {isLoading ? (
               <div className="flex items-center justify-center gap-2">
-                <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
+                <Spinner />
                 Processing...
               </div>
             ) : (
-              'Supply Token 0'
+              'Supply YGT'
             )}
           </button>
         </div>
@@ -187,37 +178,39 @@ const BorrowTab = () => {
       {/* Borrow Form */}
       <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 border border-gray-200">
         <div className="mb-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">Borrow Token 1</h3>
-          <p className="text-gray-600">Borrow Token 1 against your supplied collateral</p>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Borrow USDC</h3>
+          <p className="text-gray-600">Borrow USDC against your supplied collateral</p>
         </div>
 
         <div className="space-y-6">
           {/* Amount Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Amount to Borrow</label>
-            <div className="relative">
-              <input
-                type="number"
-                value={borrowAmount}
-                onChange={(e) => setBorrowAmount(e.target.value)}
-                placeholder="0.00"
-                max={maxBorrow}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              />
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <span className="text-sm font-medium text-gray-500">Token 1</span>
-              </div>
-            </div>
             <div className="flex justify-between mt-2">
-              <span className="text-sm text-gray-500">
-                Max borrow: {maxBorrow.toFixed(2)} Token 1
-              </span>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Amount to Borrow
+              </label>
               <button
                 onClick={() => setBorrowAmount(maxBorrow.toFixed(2))}
                 className="text-sm text-blue-600 hover:text-blue-700 font-medium"
               >
                 Max
               </button>
+            </div>
+            <div className="flex items-center justify-between w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+              <input
+                type="number"
+                value={borrowAmount}
+                onChange={(e) => setBorrowAmount(e.target.value)}
+                placeholder="0.00"
+                max={maxBorrow}
+                className="w-24 text-blue-600"
+              />
+              <div className="">
+                <span className="text-sm font-medium text-gray-500">USDC</span>
+              </div>
+            </div>
+            <div className="flex justify-between mt-2">
+              <span className="text-sm text-gray-500">Max borrow: {maxBorrow.toFixed(2)} USDC</span>
             </div>
           </div>
 
@@ -250,25 +243,11 @@ const BorrowTab = () => {
           >
             {isLoading ? (
               <div className="flex items-center justify-center gap-2">
-                <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
+                <Spinner />
                 Processing...
               </div>
             ) : (
-              'Borrow Token 1'
+              'Borrow USDC'
             )}
           </button>
         </div>
@@ -293,9 +272,8 @@ const BorrowTab = () => {
           <div>
             <h4 className="font-semibold text-orange-900 mb-1">How borrowing works</h4>
             <p className="text-orange-700 text-sm">
-              First supply Token 0 as collateral, then borrow Token 1 up to 75% of your collateral
-              value. Monitor your health factor - if it drops below 1.0, your position may be
-              liquidated.
+              First supply YGT as collateral, then borrow USDC up to 75% of your collateral value.
+              Monitor your health factor - if it drops below 1.0, your position may be liquidated.
             </p>
           </div>
         </div>

@@ -100,29 +100,28 @@ const EarnTab = () => {
         <div className="space-y-6">
           {/* Amount Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Amount to Deposit
-            </label>
-            <div className="relative">
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Amount to Deposit
+              </label>
+              <button onClick={() => setDepositAmount('100')} className="">
+                Max
+              </button>
+            </div>
+            <div className="flex items-center justify-between w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
               <input
                 type="number"
                 value={depositAmount}
                 onChange={(e) => setDepositAmount(e.target.value)}
                 placeholder="0.00"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                className="w-24 text-blue-600"
               />
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+              <div className="">
                 <span className="text-sm font-medium text-gray-500">Token 1</span>
               </div>
             </div>
             <div className="flex justify-between mt-2">
               <span className="text-sm text-gray-500">Available: 0.00 Token 1</span>
-              <button
-                onClick={() => setDepositAmount('100')}
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-              >
-                Max
-              </button>
             </div>
           </div>
 
@@ -145,7 +144,7 @@ const EarnTab = () => {
           <button
             onClick={handleDeposit}
             disabled={!depositAmount || parseFloat(depositAmount) <= 0 || isLoading}
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg"
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-blue-600 hover:to-purple-700  transition-all duration-200 shadow-lg"
           >
             {isLoading ? (
               <div className="flex items-center justify-center gap-2">

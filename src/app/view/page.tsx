@@ -1,7 +1,6 @@
 import LendingProtocol from '@/components/LendingProtocol';
-import WalletConnected from '@/components/WalletConnected';
 
-export default async function Home() {
+const ViewPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="container mx-auto px-4 py-8">
@@ -11,10 +10,11 @@ export default async function Home() {
             Deposit, borrow, and earn with the most competitive rates in DeFi
           </p>
         </div>
-        <WalletConnected />
 
         <LendingProtocol />
       </div>
     </div>
   );
-}
+};
+
+export default ViewPage;
