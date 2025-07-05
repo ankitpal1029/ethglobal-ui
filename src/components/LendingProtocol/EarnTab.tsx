@@ -4,15 +4,19 @@ import { useState } from 'react';
 import { useUSDCBalance } from '@/hooks/useUSDCBalance';
 import { MiniKit } from '@worldcoin/minikit-js';
 import { contractsConfig } from '@/contracts';
-import { Permit2 } from '@/contracts/abi/Permit2.sol/Permit2';
 import { useWaitForTransactionReceipt } from '@worldcoin/minikit-react';
 import { client } from '@/contracts/client';
+import { usePrivy } from '@privy-io/react-auth';
+import { useDeposited } from '@/hooks/useDeposited';
+import BigNumber from 'bignumber.js';
 
 const EarnTab = () => {
+  const { user } = usePrivy();
   const [depositAmount, setDepositAmount] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { data: usdcBalance } = useUSDCBalance();
   const [transactionId, setTransactionId] = useState('');
+  const { data: deposited } = useDeposited();
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     client: client,
@@ -43,21 +47,22 @@ const EarnTab = () => {
         amount: (Number(depositAmount) * 10 ** 18).toString(),
       },
       nonce: Date.now().toString(),
-      deadline: Math.floor((Date.now() + 1 * 60 * 1000) / 1000).toString(),
+      deadline: Math.floor((Date.now() + 10 * 1000) / 1000).toString(),
     };
 
     const transferDetails = {
       to: contractsConfig.LendingHook.address,
       requestedAmount: (Number(depositAmount) * 10 ** 18).toString(),
     };
+    console.log(Math.floor(Number(depositAmount) * 10 ** 18).toString(), user?.wallet?.address);
 
     try {
       const { finalPayload } = await MiniKit.commandsAsync.sendTransaction({
         transaction: [
           {
-            address: '0x000000000022D473030F116dDEE9F6B43aC78BA3',
-            abi: Permit2,
-            functionName: 'signatureTransfer',
+            address: contractsConfig.LendingHook.address,
+            abi: contractsConfig.LendingHook.abi,
+            functionName: 'earn',
             args: [
               [
                 [permitTransfer.permitted.token, permitTransfer.permitted.amount],
@@ -66,6 +71,16 @@ const EarnTab = () => {
               ],
               [transferDetails.to, transferDetails.requestedAmount],
               'PERMIT2_SIGNATURE_PLACEHOLDER_0', // Placeholders will automatically be replaced with the correct signature.
+              [
+                contractsConfig.YGT.address,
+                contractsConfig.USDC.address,
+                '5000',
+                '100',
+                contractsConfig.LendingHook.address,
+              ],
+              // POOL_ID,
+              Math.floor(Number(depositAmount) * 10 ** 18).toString(),
+              user?.wallet?.address,
             ],
           },
         ],
@@ -138,8 +153,9 @@ const EarnTab = () => {
                   />
                 </svg>
               </div>
-              <div className="text-2xl font-bold text-green-200">$2.4M</div>
-              <div className="text-sm text-green-400">+$120K this week</div>
+              <div className="text-2xl font-bold text-green-200">
+                {deposited ? BigNumber(deposited).div(1e18).toFixed(2) : '0.00'}
+              </div>
             </div>
 
             <div className="bg-purple-900/60 rounded-xl p-6 border border-white/10">

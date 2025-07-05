@@ -1,36 +1,50 @@
 import { contractsConfig } from '@/contracts';
 import { client } from '@/contracts/client';
+import { NFT_ID, POOL_ID, POOL_KEY } from '@/contracts/constants';
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
+import { MiniKit } from '@worldcoin/minikit-js';
 import { Address, parseAbiItem, zeroAddress } from 'viem';
 
+interface UserPosition {
+  collateralAmt: string;
+  borrowedAmt: string;
+  isFullyLiquidated: boolean;
+}
+
 const getUserPosition = async (address: Address) => {
-  // parse through all events emitted by the address
-  const filter = await client.createEventFilter({
+  const position = (await client.readContract({
+    abi: contractsConfig.LendingHook.abi,
     address: contractsConfig.LendingHook.address,
-    event: parseAbiItem('event Transfer(address indexed, address indexed, uint256 indexed)'),
-  });
+    functionName: 'fetchPosition',
+    args: [NFT_ID, POOL_ID],
+  })) as UserPosition;
 
-  const events = await client.getFilterLogs({
-    filter,
-  });
+  console.log({ position });
 
-  const nftsOwned = events.filter(
-    (event) => event.topics[1] === zeroAddress && event.topics[2] === address
-  );
-
-  return nftsOwned[nftsOwned.length - 1].topics[3];
+  return position;
 };
 
 export const useFetchUserPosition = () => {
   const { user } = usePrivy();
 
-  return useQuery({
+  return useQuery<UserPosition>({
     queryKey: ['user-nft', user?.wallet?.address],
+    initialData: {
+      collateralAmt: '0',
+      borrowedAmt: '0',
+      isFullyLiquidated: false,
+    },
     queryFn: async () => {
-      if (!user?.wallet?.address) return [];
+      if (!user?.wallet?.address)
+        return {
+          collateralAmt: '0',
+          borrowedAmt: '0',
+          isFullyLiquidated: false,
+        };
       return await getUserPosition(user?.wallet?.address as Address);
     },
     enabled: !!user?.wallet?.address,
+    refetchInterval: 1000,
   });
 };

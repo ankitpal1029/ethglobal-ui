@@ -27,5 +27,6 @@ export const useYGTBalance = () => {
       return await getYGTBalance(user?.wallet?.address as Address);
     },
     enabled: !!user?.wallet?.address,
+    refetchInterval: 1000,
   });
 };

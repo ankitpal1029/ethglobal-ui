@@ -7,6 +7,7 @@ export const LendingHook = [
       { internalType: 'string', name: '_nftSymbol', type: 'string' },
       { internalType: 'uint256', name: '_liquidationLimit', type: 'uint256' },
       { internalType: 'uint256', name: '_liquidationThreshold', type: 'uint256' },
+      { internalType: 'address', name: '_permit2', type: 'address' },
     ],
     stateMutability: 'nonpayable',
     type: 'constructor',
@@ -499,6 +500,34 @@ export const LendingHook = [
     inputs: [
       {
         components: [
+          {
+            components: [
+              { internalType: 'address', name: 'token', type: 'address' },
+              { internalType: 'uint256', name: 'amount', type: 'uint256' },
+            ],
+            internalType: 'struct ISignatureTransfer.TokenPermissions',
+            name: 'permitted',
+            type: 'tuple',
+          },
+          { internalType: 'uint256', name: 'nonce', type: 'uint256' },
+          { internalType: 'uint256', name: 'deadline', type: 'uint256' },
+        ],
+        internalType: 'struct ISignatureTransfer.PermitTransferFrom',
+        name: 'permitTransferFrom',
+        type: 'tuple',
+      },
+      {
+        components: [
+          { internalType: 'address', name: 'to', type: 'address' },
+          { internalType: 'uint256', name: 'requestedAmount', type: 'uint256' },
+        ],
+        internalType: 'struct ISignatureTransfer.SignatureTransferDetails',
+        name: 'transferDetails',
+        type: 'tuple',
+      },
+      { internalType: 'bytes', name: 'signature', type: 'bytes' },
+      {
+        components: [
           { internalType: 'Currency', name: 'currency0', type: 'address' },
           { internalType: 'Currency', name: 'currency1', type: 'address' },
           { internalType: 'uint24', name: 'fee', type: 'uint24' },
@@ -763,6 +792,34 @@ export const LendingHook = [
   },
   {
     inputs: [
+      {
+        components: [
+          {
+            components: [
+              { internalType: 'address', name: 'token', type: 'address' },
+              { internalType: 'uint256', name: 'amount', type: 'uint256' },
+            ],
+            internalType: 'struct ISignatureTransfer.TokenPermissions',
+            name: 'permitted',
+            type: 'tuple',
+          },
+          { internalType: 'uint256', name: 'nonce', type: 'uint256' },
+          { internalType: 'uint256', name: 'deadline', type: 'uint256' },
+        ],
+        internalType: 'struct ISignatureTransfer.PermitTransferFrom',
+        name: 'permitTransferFrom',
+        type: 'tuple',
+      },
+      {
+        components: [
+          { internalType: 'address', name: 'to', type: 'address' },
+          { internalType: 'uint256', name: 'requestedAmount', type: 'uint256' },
+        ],
+        internalType: 'struct ISignatureTransfer.SignatureTransferDetails',
+        name: 'transferDetails',
+        type: 'tuple',
+      },
+      { internalType: 'bytes', name: 'signature', type: 'bytes' },
       { internalType: 'uint256', name: '_nftId', type: 'uint256' },
       {
         components: [

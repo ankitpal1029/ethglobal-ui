@@ -4,6 +4,14 @@ import { useState } from 'react';
 import Spinner from '../shared/Spinner';
 import { useYGTBalance } from '@/hooks/useYGTBalance';
 import { useFetchUserPosition } from '@/hooks/useFetchUserNft';
+import { contractsConfig } from '@/contracts';
+import { usePrivy } from '@privy-io/react-auth';
+import { MiniKit } from '@worldcoin/minikit-js';
+import { client } from '@/contracts/client';
+import { useWaitForTransactionReceipt } from '@worldcoin/minikit-react';
+import { NFT_ID } from '@/contracts/constants';
+import { usePoolPrice } from '@/hooks/usePoolPrice';
+import BigNumber from 'bignumber.js';
 
 const BorrowTab = () => {
   const [supplyAmount, setSupplyAmount] = useState('');
@@ -11,15 +19,85 @@ const BorrowTab = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { data: ygtBalance } = useYGTBalance();
   const { data: userPosition } = useFetchUserPosition();
+  const { user } = usePrivy();
+  const [transactionId, setTransactionId] = useState('');
+  const { data: poolPrice } = usePoolPrice();
 
-  console.log({ userPosition });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    client: client,
+    appConfig: {
+      app_id: 'app_c9630568fd794f9b33abac9d26cae36f',
+    },
+    transactionId: transactionId,
+  });
 
   const handleSupply = async () => {
     if (!supplyAmount || parseFloat(supplyAmount) <= 0) return;
 
     setIsLoading(true);
+    // Permit2 is valid for max 1 hour
+    const permitTransfer = {
+      permitted: {
+        token: contractsConfig.YGT.address, // The token I'm sending
+        amount: (Number(supplyAmount) * 10 ** 18).toString(),
+      },
+      nonce: Date.now().toString(),
+      deadline: Math.floor((Date.now() + 10 * 1000) / 1000).toString(),
+    };
+
+    const transferDetails = {
+      to: contractsConfig.LendingHook.address,
+      requestedAmount: (Number(supplyAmount) * 10 ** 18).toString(),
+    };
+    console.log(Math.floor(Number(supplyAmount) * 10 ** 18).toString(), user?.wallet?.address);
+
+    try {
+      const { finalPayload } = await MiniKit.commandsAsync.sendTransaction({
+        transaction: [
+          {
+            address: contractsConfig.LendingHook.address,
+            abi: contractsConfig.LendingHook.abi,
+            functionName: 'supply',
+            args: [
+              [
+                [permitTransfer.permitted.token, permitTransfer.permitted.amount],
+                permitTransfer.nonce,
+                permitTransfer.deadline,
+              ],
+              [transferDetails.to, transferDetails.requestedAmount],
+              'PERMIT2_SIGNATURE_PLACEHOLDER_0', // Placeholders will automatically be replaced with the correct signature.
+              NFT_ID, // NFT_ID
+              [
+                contractsConfig.YGT.address,
+                contractsConfig.USDC.address,
+                '5000',
+                '100',
+                contractsConfig.LendingHook.address,
+              ],
+              Math.floor(Number(supplyAmount) * 10 ** 18).toString(),
+            ],
+          },
+        ],
+        permit2: [
+          {
+            ...permitTransfer,
+            spender: contractsConfig.LendingHook.address,
+          }, // If you have more than one permit2 you can add more values here.
+        ],
+      });
+
+      if (finalPayload.status === 'error') {
+        console.error('Error sending transaction', finalPayload);
+      } else {
+        console.log(finalPayload.transaction_id);
+        setTransactionId(finalPayload.transaction_id);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
     // Simulate supply transaction
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // await new Promise((resolve) => setTimeout(resolve, 2000));
     setIsLoading(false);
     setSupplyAmount('');
   };
@@ -28,16 +106,52 @@ const BorrowTab = () => {
     if (!borrowAmount || parseFloat(borrowAmount) <= 0) return;
 
     setIsLoading(true);
+
+    try {
+      const { finalPayload } = await MiniKit.commandsAsync.sendTransaction({
+        transaction: [
+          {
+            address: contractsConfig.LendingHook.address,
+            abi: contractsConfig.LendingHook.abi,
+            functionName: 'borrow',
+            args: [
+              NFT_ID,
+              [
+                contractsConfig.YGT.address,
+                contractsConfig.USDC.address,
+                '5000',
+                '100',
+                contractsConfig.LendingHook.address,
+              ],
+              Math.floor(Number(borrowAmount) * 10 ** 18).toString(),
+            ],
+          },
+        ],
+      });
+      if (finalPayload.status === 'error') {
+        console.error('Error sending transaction', finalPayload);
+      } else {
+        console.log(finalPayload.transaction_id);
+        setTransactionId(finalPayload.transaction_id);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
     // Simulate borrow transaction
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // await new Promise((resolve) => setTimeout(resolve, 2000));
     setIsLoading(false);
     setBorrowAmount('');
   };
 
   // Calculate max borrow based on supply amount
-  const maxBorrow = supplyAmount ? parseFloat(supplyAmount) * 0.75 : 0; // 75% collateral ratio
-  const healthFactor =
-    supplyAmount && borrowAmount ? (parseFloat(supplyAmount) * 0.75) / parseFloat(borrowAmount) : 0;
+  const maxBorrow = supplyAmount ? parseFloat(supplyAmount) * 0.8 : 0; // 75% collateral ratio
+
+  const collateralRatio = BigNumber(userPosition.borrowedAmt)
+    .div(userPosition.collateralAmt)
+    .times(poolPrice)
+    .times(100)
+    .toNumber();
 
   return (
     <>
@@ -72,6 +186,37 @@ const BorrowTab = () => {
               <div className="text-sm text-gray-400">Variable rate</div>
             </div>
 
+            <div className="bg-[#23243a]/80 rounded-xl p-6 border border-orange-500/30">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-200">Debt Info</span>
+                <svg
+                  className="w-5 h-5 text-orange-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                  />
+                </svg>
+              </div>
+              <div className="text-2xl font-bold text-orange-300 flex justify-between">
+                <p className="">borrowed:</p>
+                <p>{BigNumber(userPosition.borrowedAmt).div(1e18).toFixed(2)}</p>
+              </div>
+              <div className="text-sm text-gray-400 flex justify-between">
+                <p className="">collateral:</p>
+                <p>{BigNumber(userPosition.collateralAmt).div(1e18).toFixed(2)}</p>
+              </div>
+              <div className="flex justify-between">
+                <p className="text-sm text-gray-400">Pool Price:</p>
+                <p className="text-sm text-gray-400">{poolPrice}</p>
+              </div>
+            </div>
+
             <div className="bg-[#23243a]/80 rounded-xl p-6 border border-red-500/30">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-200">Collateral Ratio</span>
@@ -89,8 +234,7 @@ const BorrowTab = () => {
                   />
                 </svg>
               </div>
-              <div className="text-2xl font-bold text-red-300">75%</div>
-              <div className="text-sm text-gray-400">Minimum required</div>
+              <div className="text-2xl font-bold text-red-300">{collateralRatio.toFixed(2)}%</div>
             </div>
 
             <div className="bg-[#23243a]/80 rounded-xl p-6 border border-yellow-500/30">
@@ -112,17 +256,14 @@ const BorrowTab = () => {
               </div>
               <div
                 className={`text-2xl font-bold ${
-                  healthFactor > 1.5
+                  collateralRatio / 100 < 0.75
                     ? 'text-green-300'
-                    : healthFactor > 1
+                    : collateralRatio / 100 < 0.9
                     ? 'text-yellow-300'
                     : 'text-red-300'
                 }`}
               >
-                {healthFactor.toFixed(2)}
-              </div>
-              <div className="text-sm text-gray-400">
-                {healthFactor > 1.5 ? 'Safe' : healthFactor > 1 ? 'Warning' : 'Danger'}
+                {userPosition.isFullyLiquidated ? 'Fully Liquidated' : 'Not Liquidated'}
               </div>
             </div>
           </div>
@@ -244,12 +385,6 @@ const BorrowTab = () => {
           {/* Borrow Button */}
           <button
             onClick={handleBorrow}
-            disabled={
-              !borrowAmount ||
-              parseFloat(borrowAmount) <= 0 ||
-              parseFloat(borrowAmount) > maxBorrow ||
-              isLoading
-            }
             className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg"
           >
             {isLoading ? (

@@ -6,7 +6,6 @@ import { usePrivy } from '@privy-io/react-auth';
 
 export default function Home() {
   const { ready, authenticated, user } = usePrivy();
-  console.log({ authenticated, ready, user });
 
   if (!ready) {
     return <div>Loading...</div>;

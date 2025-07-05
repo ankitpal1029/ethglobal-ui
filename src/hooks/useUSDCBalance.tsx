@@ -27,5 +27,6 @@ export const useUSDCBalance = () => {
       return await getUSDCBalance(user?.wallet?.address as Address);
     },
     enabled: !!user?.wallet?.address,
+    refetchInterval: 1000,
   });
 };
