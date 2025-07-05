@@ -17,123 +17,130 @@ const EarnTab = () => {
   };
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="text-center">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Earn APY</h2>
-        <p className="text-gray-600">Deposit Token 1 and start earning competitive yields</p>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-blue-700">Current APY</span>
-            <svg
-              className="w-5 h-5 text-blue-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-              />
-            </svg>
+    <>
+      <div className="bg-[#181c2a]/90 rounded-2xl shadow-xl border border-white/10 p-8 mb-8">
+        <div className="space-y-8">
+          {/* Header */}
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-white mb-2">Earn APY</h2>
+            <p className="text-gray-300">Deposit USDC and start earning competitive yields</p>
           </div>
-          <div className="text-2xl font-bold text-blue-900">8.45%</div>
-          <div className="text-sm text-blue-600">+0.12% from yesterday</div>
-        </div>
 
-        <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-green-700">Total Deposited</span>
-            <svg
-              className="w-5 h-5 text-green-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-              />
-            </svg>
-          </div>
-          <div className="text-2xl font-bold text-green-900">$2.4M</div>
-          <div className="text-sm text-green-600">+$120K this week</div>
-        </div>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-blue-900/60 rounded-xl p-6 border border-white/10">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-blue-300">Current APY</span>
+                <svg
+                  className="w-5 h-5 text-blue-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                  />
+                </svg>
+              </div>
+              <div className="text-2xl font-bold text-blue-200">8.45%</div>
+              <div className="text-sm text-blue-400">+0.12% from yesterday</div>
+            </div>
 
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-purple-700">Your Earnings</span>
-            <svg
-              className="w-5 h-5 text-purple-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-              />
-            </svg>
+            <div className="bg-green-900/60 rounded-xl p-6 border border-white/10">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-green-300">Total Deposited</span>
+                <svg
+                  className="w-5 h-5 text-green-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                  />
+                </svg>
+              </div>
+              <div className="text-2xl font-bold text-green-200">$2.4M</div>
+              <div className="text-sm text-green-400">+$120K this week</div>
+            </div>
+
+            <div className="bg-purple-900/60 rounded-xl p-6 border border-white/10">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-purple-300">Your Earnings</span>
+                <svg
+                  className="w-5 h-5 text-purple-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                  />
+                </svg>
+              </div>
+              <div className="text-2xl font-bold text-purple-200">$0.00</div>
+              <div className="text-sm text-purple-400">Start depositing to earn</div>
+            </div>
           </div>
-          <div className="text-2xl font-bold text-purple-900">$0.00</div>
-          <div className="text-sm text-purple-600">Start depositing to earn</div>
         </div>
       </div>
 
       {/* Deposit Form */}
-      <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 border border-gray-200">
+      <div className="bg-[#23243a]/80 rounded-2xl p-8 border border-white/10 mb-8">
         <div className="mb-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">Deposit Token 1</h3>
-          <p className="text-gray-600">Deposit your tokens to start earning APY</p>
+          <h3 className="text-xl font-semibold text-white mb-2">Deposit USDC</h3>
+          <p className="text-gray-400">Deposit your tokens to start earning APY</p>
         </div>
 
         <div className="space-y-6">
           {/* Amount Input */}
           <div>
             <div className="flex items-center justify-between">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Amount to Deposit
               </label>
-              <button onClick={() => setDepositAmount('100')} className="">
+              <button
+                onClick={() => setDepositAmount('100')}
+                className="text-sm text-blue-400 hover:text-blue-300 font-medium"
+              >
                 Max
               </button>
             </div>
-            <div className="flex items-center justify-between w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+            <div className="flex items-center justify-between w-full px-4 py-3 border border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-[#181c2a]/80">
               <input
                 type="number"
                 value={depositAmount}
                 onChange={(e) => setDepositAmount(e.target.value)}
                 placeholder="0.00"
-                className="w-24 text-blue-600"
+                className="w-24 text-blue-300 bg-transparent outline-none"
               />
               <div className="">
-                <span className="text-sm font-medium text-gray-500">Token 1</span>
+                <span className="text-sm font-medium text-gray-400">USDC</span>
               </div>
             </div>
             <div className="flex justify-between mt-2">
-              <span className="text-sm text-gray-500">Available: 0.00 Token 1</span>
+              <span className="text-sm text-gray-500">Available: 0.00 USDC</span>
             </div>
           </div>
 
           {/* APY Display */}
-          <div className="bg-white rounded-xl p-4 border border-gray-200">
+          <div className="bg-[#181c2a]/80 rounded-xl p-4 border border-white/10">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-gray-600">Estimated APY</span>
-              <span className="text-lg font-bold text-green-600">8.45%</span>
+              <span className="text-sm font-medium text-gray-400">Estimated APY</span>
+              <span className="text-lg font-bold text-green-400">8.45%</span>
             </div>
             <div className="flex justify-between items-center mt-1">
-              <span className="text-sm font-medium text-gray-600">Estimated Daily Earnings</span>
-              <span className="text-sm font-medium text-gray-900">
+              <span className="text-sm font-medium text-gray-400">Estimated Daily Earnings</span>
+              <span className="text-sm font-medium text-blue-200">
                 $
                 {depositAmount ? ((parseFloat(depositAmount) * 0.0845) / 365).toFixed(4) : '0.0000'}
               </span>
@@ -166,12 +173,11 @@ const EarnTab = () => {
                 Processing...
               </div>
             ) : (
-              'Deposit Token 1'
+              'Deposit USDC'
             )}
           </button>
         </div>
       </div>
-
       {/* Info Section */}
       <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
         <div className="flex items-start gap-3">
@@ -191,14 +197,14 @@ const EarnTab = () => {
           <div>
             <h4 className="font-semibold text-blue-900 mb-1">How it works</h4>
             <p className="text-blue-700 text-sm">
-              When you deposit Token 1, it's added to our lending pool. You earn interest based on
-              the current APY rate, which compounds automatically. You can withdraw your deposits
-              and earned interest at any time.
+              When you deposit USDC, it's added to our lending pool. You earn interest based on the
+              current APY rate, which compounds automatically. You can withdraw your deposits and
+              earned interest at any time.
             </p>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 export default EarnTab;

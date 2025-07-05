@@ -12,32 +12,34 @@ const LendingProtocol = () => {
   return (
     <div className="max-w-4xl mx-auto">
       {/* Tab Navigation */}
-      <div className="flex rounded-2xl p-2 mb-8">
+      <div className="flex bg-[#181c2a]/80 rounded-full shadow-lg p-2 mb-8 w-full max-w-md mx-auto">
         <button
           onClick={() => setActiveTab('earn')}
           className={cn(
-            'w-full py-4 px-6 rounded-xl font-semibold flex items-center justify-center gap-2 text-black',
-            activeTab == 'earn' ? 'bg-blue-500 ' : 'bg-white'
+            'flex-1 flex items-center justify-center gap-2 py-3 px-0 rounded-full font-semibold text-lg transition-all duration-200',
+            activeTab === 'earn'
+              ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md'
+              : 'bg-transparent border border-white/20 text-gray-200 hover:bg-white/5 hover:text-white'
           )}
         >
-          <DollarSign />
+          <DollarSign className={cn(activeTab === 'earn' ? 'text-white' : 'text-gray-400')} />
           Earn
         </button>
         <button
           onClick={() => setActiveTab('borrow')}
           className={cn(
-            'w-full py-4 px-6 rounded-xl font-semibold flex items-center justify-center gap-2 text-black',
-            activeTab == 'borrow' ? 'bg-blue-500 ' : 'bg-white'
+            'flex-1 flex items-center justify-center gap-2 py-3 px-0 rounded-full font-semibold text-lg transition-all duration-200 ml-2',
+            activeTab === 'borrow'
+              ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md'
+              : 'bg-transparent border border-white/20 text-gray-200 hover:bg-white/5 hover:text-white'
           )}
         >
-          <CreditCard />
+          <CreditCard className={cn(activeTab === 'borrow' ? 'text-white' : 'text-gray-400')} />
           Borrow
         </button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-lg p-8">
-        {activeTab === 'earn' ? <EarnTab /> : <BorrowTab />}
-      </div>
+      {activeTab === 'earn' ? <EarnTab /> : <BorrowTab />}
     </div>
   );
 };
