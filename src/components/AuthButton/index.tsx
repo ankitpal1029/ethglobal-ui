@@ -1,10 +1,8 @@
 'use client';
-import { walletAuth } from '@/auth/wallet';
-import { useLoginWithSiwe } from '@privy-io/react-auth';
-import { Button, LiveFeedback } from '@worldcoin/mini-apps-ui-kit-react';
-import { useMiniKit } from '@worldcoin/minikit-js/minikit-provider';
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { cn } from '../../../lib/utils';
+import { Button } from '../ui/button';
+import { useRouter } from 'next/navigation';
 
 /**
  * This component is an example of how to authenticate a user
@@ -13,50 +11,7 @@ import { cn } from '../../../lib/utils';
  */
 export const LandingPage = () => {
   const [isPending, setIsPending] = useState(false);
-  const { isInstalled } = useMiniKit();
-  const { generateSiweNonce, loginWithSiwe } = useLoginWithSiwe();
-
-  const onClick = useCallback(async () => {
-    if (!isInstalled || isPending) {
-      return;
-    }
-    setIsPending(true);
-    try {
-      const privyNonce = await generateSiweNonce();
-      const result = await walletAuth(privyNonce);
-      if (result) {
-        await loginWithSiwe({ message: result.message, signature: result.signature });
-      }
-    } catch (error) {
-      console.error('Wallet authentication button error', error);
-      setIsPending(false);
-      return;
-    }
-
-    setIsPending(false);
-  }, [isInstalled, isPending]);
-
-  useEffect(() => {
-    const authenticate = async () => {
-      if (isInstalled && !isPending) {
-        setIsPending(true);
-        try {
-          const privyNonce = await generateSiweNonce();
-          const result = await walletAuth(privyNonce);
-          if (result) {
-            console.log('result: logingin', result);
-            await loginWithSiwe({ message: result.message, signature: result.signature });
-          }
-        } catch (error) {
-          console.error('Auto wallet authentication error', error);
-        } finally {
-          setIsPending(false);
-        }
-      }
-    };
-
-    authenticate();
-  }, [isInstalled, isPending]);
+  const router = useRouter();
 
   return (
     <div
@@ -115,10 +70,13 @@ export const LandingPage = () => {
         </h2>
         <div className="mb-20">
           <Button
-            onClick={onClick}
+            onClick={() => {
+              // redirect to home
+              router.push('/home');
+            }}
             disabled={isPending}
             size="lg"
-            variant="primary"
+            variant="default"
             className="rounded-full px-12 py-4 text-lg font-semibold shadow-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:scale-105 hover:from-purple-600 hover:to-blue-600 transition-transform border-2 border-white/10"
           >
             Launch App

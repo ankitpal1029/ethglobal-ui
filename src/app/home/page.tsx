@@ -1,5 +1,4 @@
 import LendingProtocol from '@/components/LendingProtocol';
-import WalletConnected from '@/components/WalletConnected';
 
 export default async function Home() {
   return (

@@ -1,7 +1,6 @@
 'use client';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { isServer, QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MiniKitProvider } from '@worldcoin/minikit-js/minikit-provider';
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import dynamic from 'next/dynamic';
@@ -14,7 +13,6 @@ const ErudaProvider = dynamic(() => import('@/providers/Eruda').then((c) => c.Er
 // Define props for ClientProviders
 interface ClientProvidersProps {
   children: ReactNode;
-  session: Session | null; // Use the appropriate type for session from next-auth
 }
 
 function makeQueryClient() {
@@ -57,29 +55,25 @@ function getQueryClient() {
  *
  * This component ensures both providers are available to all child components.
  */
-export default function ClientProviders({ children, session }: ClientProvidersProps) {
+export default function ClientProviders({ children }: ClientProvidersProps) {
   const [queryClient] = useState(getQueryClient());
 
   return (
-    <ErudaProvider>
-      <QueryClientProvider client={queryClient}>
-        <PrivyProvider
-          appId="cmcpukbuq018ljo0mgls3uhr2"
-          clientId="client-WY6N5PkyFYAYyQgbjfgw7XuNeC46PJPpfZWdPcgVifmqL"
-          config={{
-            // Create embedded wallets for users who don't have a wallet
-            embeddedWallets: {
-              ethereum: {
-                createOnLogin: 'users-without-wallets',
-              },
+    <QueryClientProvider client={queryClient}>
+      <PrivyProvider
+        appId="cmcpukbuq018ljo0mgls3uhr2"
+        clientId="client-WY6N5PkyFYAYyQgbjfgw7XuNeC46PJPpfZWdPcgVifmqL"
+        config={{
+          // Create embedded wallets for users who don't have a wallet
+          embeddedWallets: {
+            ethereum: {
+              createOnLogin: 'users-without-wallets',
             },
-          }}
-        >
-          <MiniKitProvider>
-            <SessionProvider session={session}>{children}</SessionProvider>
-          </MiniKitProvider>
-        </PrivyProvider>
-      </QueryClientProvider>
-    </ErudaProvider>
+          },
+        }}
+      >
+        {children}
+      </PrivyProvider>
+    </QueryClientProvider>
   );
 }
