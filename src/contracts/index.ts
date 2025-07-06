@@ -9,15 +9,15 @@ export const contractsConfig: Record<
   { address: Address; abi: Abi }
 > = {
   YGT: {
-    address: '0x230a2509362d281EE9f8464a7d1DE09980e24d57',
+    address: '0x76f14c98d2B3d4D7e09486Ca09e5BE1B4E19182a',
     abi: YGT,
   },
   USDC: {
-    address: '0x509D073aec51cd88ac997eF88e18CFb03fBf9B22',
+    address: '0xbF784Ac432D1CA21135B3ee603E11ED990D77EA4',
     abi: USDC,
   },
   LendingHook: {
-    address: '0x8B40fC36F78d24D0949BdbB4A4b3f0D45b75D040',
+    address: '0xbEA696425cB0E2D7c4D7ba15e6ED3Eb6968f5040',
     abi: LendingHook,
   },
   SlotView: {
